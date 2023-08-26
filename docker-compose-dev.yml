@@ -1,0 +1,65 @@
+version: '3'
+services:
+
+  # Python
+  flask_test:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.dev
+      args:
+        APP_PORT: ${APP_PORT}
+    container_name: flask_test
+    image: digitalocean.com/flask-python:3.6
+    restart: unless-stopped
+    environment:
+      TZ: ${APP_TIMEZONE}
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    volumes:
+      - .:/var/www
+    depends_on:
+      - mongodb_test
+      - rabbitmq_test
+    networks:
+      - flask-mongo-test-networks
+
+  # Mongodb
+  mongodb_test:
+    container_name: "mongodb_test"
+    image: mongo:latest
+    environment:
+      MONGODB_DATA_DIR: /data/db
+      MONDODB_LOG_DIR: /dev/null
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    ports:
+      - ${MONGO_INITDB_PORT}:27017
+    volumes:
+      - mongodb_test_vol:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - flask-mongo-test-networks
+
+  # Rabbitmq
+  rabbitmq_test:
+    container_name: "rabbitmq"
+    image: rabbitmq:3.8-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
+    ports:
+      # AMQP protocol port
+      - ${RABBITMQ_PORT}:5672
+      # HTTP management UI
+      - ${RABBITMQ_PORT_MANAGEMENT}:15672
+    networks:
+      - flask-mongo-test-networks
+
+#Docker Networks
+networks:
+  flask-mongo-test-networks:
+    driver: bridge
+
+volumes:
+  mongodb_test_vol:
