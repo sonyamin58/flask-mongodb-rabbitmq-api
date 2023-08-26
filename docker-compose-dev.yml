@@ -23,6 +23,9 @@ services:
       - flask-mongo-test-networks
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    links:
+      - mongodb_test
+      - rabbitmq_test
 
   # Mongodb
   mongodb_test:

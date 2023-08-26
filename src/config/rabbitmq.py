@@ -21,7 +21,7 @@ class RabbitMQ:
         # set amqp connection parameters
         parameters = pika.ConnectionParameters(
             host=str(RABBITMQ_HOST),
-            port=int(RABBITMQ_PORT),
+            port=str(RABBITMQ_PORT),
             credentials=credentials
         )
 
