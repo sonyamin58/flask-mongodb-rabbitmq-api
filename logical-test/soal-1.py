@@ -11,19 +11,17 @@ class SoalSatu:
             input_total_kata = input("Input jumlah kata = ")
             if (input_total_kata.isnumeric() > 0):
                 error = False
+                return input_total_kata
             else:
                 print(self.FAIL, "inputan (harus angka!)", self.ENDC)
-
-        return input_total_kata
 
     def input_kata(self, total_kata):
         list_kata_arr = []
         for key in range(int(total_kata)):
             input_kata = input("Input kata %d = " % (key+1))
             list_kata_arr.append(str(input_kata).lower())
-        
-        return list_kata_arr
 
+        return list_kata_arr
 
     def handle(self, list_kata_arr):
         duplicate_kata = {
@@ -37,17 +35,19 @@ class SoalSatu:
                     duplicate_kata["baris"].append(i+1)
                     break
         return duplicate_kata
-    
+
     def output(self, duplicate_kata):
         if len(duplicate_kata["baris"]) > 0:
-            print(self.OKGREEN)
+            print(self.OKBLUE)
             print("kata =", duplicate_kata["kata"])
+            print(self.OKGREEN)
             print(duplicate_kata["baris"])
         else:
             print(self.FAIL)
             print(False)
-        
+
         print(self.ENDC)
+
 
 blueprint = SoalSatu()
 input_total_kata = blueprint.input_total_kata()
