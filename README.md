@@ -1,35 +1,116 @@
-#!make
-include .env
-export $(shell sed 's/=.\*//' .env)
+# Flask Mongo RabbitMq (Ewallet)
 
-#ganti compose file sesuai environment
-compose-file = docker-compose-dev.yml
+### Getting started
 
-run:
-gunicorn -w 4 --bind 0.0.0.0:$(APP_PORT) app:app
-listener:
+```bash
+git clone https://github.com/sonyamin58/flask-mongodb-rabbitmq-api
+
+cd flask-mongodb-rabbitmq-api
+```
+
+### Run Application
+
+running application three methods manually, using docker or via Makefile
+
+- Manually :
+
+```bash
+# Copy enviroment variables from .env.sample to .env
+cp .env.sample .env
+
+# Install package
+pip3 install -r requirements.txt
+
+# Run Application
+python3 app.py
+
+# Or with gunicorn
+gunicorn -w 4 --bind 0.0.0.0:5000 app:app
+```
+
+- Via Docker :
+
+```bash
+# Copy enviroment variables from .env.sample to .env
+cp .env.sample .env
+
+# Build application
+docker-compose -f docker-compose-dev.yml up --build --remove-orphans --force-recreate
+
+# Stop aplication
+CTRL+C
+# then
+docker-compose -f docker-compose-dev.yml down
+
+# After build you can run command with this
+docker-compose -f docker-compose-dev.yml up
+
+# Or you can hide log with command
+docker-compose -f docker-compose-dev.yml up -d
+```
+
+- Via Make :
+
+```bash
+# Copy enviroment variables from .env.sample to .env
+cp .env.sample .env
+
+# Build application
+make docker-build
+
+# Stop aplication
+CTRL+C
+# then
+make docker-down
+
+# start application and others service
+make docker-start
+
+# stop application and others service
+make docker-stop
+```
+
+## Run Listener
+
+running application three methods manually, using docker or via Makefile
+
+- Manually :
+
+```bash
 python3 transfer_listener.py
+```
 
-docker-listener:
+- Via Docker :
+
+```bash
 docker exec -it flask_test python3 transfer_listener.py
-docker-start:
-docker-compose -f $(compose-file) up -d
-docker-start-watch:
-docker-compose -f $(compose-file) up
-docker-build:
-docker-compose -f $(compose-file) up --build --remove-orphans --force-recreate -d
-docker-build-watch:
-docker-compose -f $(compose-file) up --build --remove-orphans --force-recreate
-docker-stop:
-docker-compose -f $(compose-file) stop
-docker-down:
-docker-compose -f $(compose-file) down
+```
 
-soal-1:
+- Via Make :
+
+```bash
+make listener
+#or
+make docker-listener
+
+```
+
+### Logical Test
+
+Manual
+
+```bash
 python3 logical-test/soal-1.py
-soal-2:
 python3 logical-test/soal-2.py
-soal-3:
 python3 logical-test/soal-3.py
-soal-4:
 python3 logical-test/soal-4.py
+```
+
+Makefile
+
+```bash
+make soal-1
+make soal-2
+make soal-3
+make soal-4
+```
