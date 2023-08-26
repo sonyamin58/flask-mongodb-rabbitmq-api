@@ -20,5 +20,5 @@ def errorhandler(e):
         "code": e.code,
         "status": "ERROR",
         "msg": str(e),
-        "name": e.name,
+        "name": e.name
     }), e.code
