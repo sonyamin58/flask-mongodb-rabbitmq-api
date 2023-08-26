@@ -5,6 +5,7 @@ from src.config.mongo import db
 from src.modules.v1.auth.auth_service import AuthService
 
 auth_handler = Blueprint('auth_handler', __name__)
+service = AuthService(db)
 
 
 @auth_handler.route('/register', methods=['POST'])
@@ -23,7 +24,6 @@ def register():
         }), 422
 
     # save data
-    service = AuthService(db)
     result = service.signup()
 
     if result != False:
@@ -52,7 +52,6 @@ def login():
         }), 422
 
     # check data
-    service = AuthService(db)
     result = service.signin()
 
     if result != False:
@@ -94,12 +93,11 @@ def profile():
 
     where = {"user_id": str(get_jwt_identity())}
 
-    # # update data
-    service = AuthService(db)
+    # update data
     result = service.update(where, req)
 
     if result != False:
-        me = service.me(str(get_jwt_identity()))
+        me = service.who(str(get_jwt_identity()))
         return jsonify({
             "status": "SUCCESS",
             "result": me

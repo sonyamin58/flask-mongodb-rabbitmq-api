@@ -16,6 +16,8 @@ class AuthService:
 
         exist = self.users.find_one({"phone_number": req.get("phone_number")})
         if exist is None:
+            self.now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
             user = {
                 "user_id": str(uuid4()),
                 "first_name": str(req.get('first_name')),
@@ -26,12 +28,12 @@ class AuthService:
                 "balance": 0,
                 "created_at": self.now,
             }
+
             insert = self.users.insert_one(user)
             if insert.acknowledged:
                 del user['_id']
                 del user['pin']
                 del user['balance']
-
                 return user
 
         return False
@@ -49,18 +51,19 @@ class AuthService:
 
         return False
 
-    def me(self, _id):
+    def who(self, user_id):
         user = self.users.find_one(
-            {"user_id": str(_id)},
+            {"user_id": str(user_id)},
             {'_id': False, 'pin': False}
         )
 
         if user is not None:
             return user
-        else:
-            return False
+
+        return False
 
     def update(self, where, set):
+        self.now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         set["updated_at"] = self.now
 
         update = self.users.update_one(
@@ -70,5 +73,5 @@ class AuthService:
 
         if update.acknowledged:
             return update
-        else:
-            return False
+
+        return False

@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
-from pymongo.errors import ConnectionFailure
+from pymongo.errors import ServerSelectionTimeoutError, ConnectionFailure
 
 
 def mongo():
@@ -18,12 +18,16 @@ def mongo():
             host=f"{MONGO_INITDB_HOSTNAME}:{MONGO_INITDB_PORT}",
             username=MONGO_INITDB_USERNAME,
             password=MONGO_INITDB_PASSWORD,
-            serverSelectionTimeoutMS=2000,
+            serverSelectionTimeoutMS=2000
         )
         db = client[f"{MONGO_INITDB_DATABASE}"]
-    except ConnectionFailure as err:
-        print("Server not available", err)
-        db = err
+        db.command('ping')
+
+        print(" [*] MongoDB OK")
+
+    except Exception as err:
+        print("MongoDB Error:", err)
+        exit(1)
 
     return db
 

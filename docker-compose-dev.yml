@@ -10,7 +10,6 @@ services:
       args:
         APP_PORT: ${APP_PORT}
     image: flask_test
-    restart: unless-stopped
     environment:
       TZ: ${APP_TIMEZONE}
     ports:
@@ -22,11 +21,14 @@ services:
       - rabbitmq_test
     networks:
       - flask-mongo-test-networks
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   # Mongodb
   mongodb_test:
     container_name: "mongodb_test"
     image: mongo:latest
+    restart: always
     environment:
       MONGODB_DATA_DIR: /data/db
       MONDODB_LOG_DIR: /dev/null
@@ -46,6 +48,7 @@ services:
   rabbitmq_test:
     container_name: "rabbitmq_test"
     image: rabbitmq:3.8-management-alpine
+    restart: always
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
@@ -64,4 +67,6 @@ networks:
 
 volumes:
   mongodb_test_vol_db:
+    driver: local
   mongodb_test_vol_configdb:
+    driver: local
