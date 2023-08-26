@@ -9,7 +9,7 @@ services:
       args:
         APP_PORT: ${APP_PORT}
     container_name: flask_test
-    image: digitalocean.com/flask-python:3.6
+    image: flask_test
     restart: unless-stopped
     environment:
       TZ: ${APP_TIMEZONE}
@@ -36,8 +36,9 @@ services:
     ports:
       - ${MONGO_INITDB_PORT}:27017
     volumes:
-      - mongodb_test_vol:/data/db
-      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - mongodb_test_vol_db:/data/db
+      - mongodb_test_vol_configdb:/data/configdb
+      - ./docker-entrypoint-initdb.d/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     networks:
       - flask-mongo-test-networks
 
@@ -62,4 +63,5 @@ networks:
     driver: bridge
 
 volumes:
-  mongodb_test_vol:
+  mongodb_test_vol_db:
+  mongodb_test_vol_configdb:
