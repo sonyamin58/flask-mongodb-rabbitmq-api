@@ -11,6 +11,7 @@ if __name__ == '__main__':
     load_dotenv(dotenv_path)
 
     port = os.getenv('APP_PORT')
+    print("Run server in port:", port)
     app.run(debug=True, host='0.0.0.0', port=port)
 
 

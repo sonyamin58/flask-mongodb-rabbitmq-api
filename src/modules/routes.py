@@ -8,16 +8,8 @@ routes = Blueprint('routes', __name__)
 def index():
     now = datetime.now()
 
-    data = {
-        "a": "b",
-        "b": "c"
-    }
-    print(data)
-    del data['a']
-
     return jsonify({
         "status": True,
         "message": "Hello World",
-        "datetime": now,
-        "data": data
+        "datetime": now
     }), 200
