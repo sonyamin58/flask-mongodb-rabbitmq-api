@@ -1,5 +1,12 @@
+#!make
+include .env
+export $(shell sed 's/=.*//' .env)
+
 #ganti compose file sesuai environment
 compose-file = docker-compose-dev.yml
+
+run:
+	gunicorn -w 4 --bind 0.0.0.0:$(APP_PORT) app:app
 
 docker-start:
 	docker-compose -f $(compose-file) up -d

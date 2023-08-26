@@ -3,12 +3,12 @@ services:
 
   # Python
   flask_test:
+    container_name: flask_test
     build:
       context: .
       dockerfile: ./docker/Dockerfile.dev
       args:
         APP_PORT: ${APP_PORT}
-    container_name: flask_test
     image: flask_test
     restart: unless-stopped
     environment:
@@ -36,15 +36,15 @@ services:
     ports:
       - ${MONGO_INITDB_PORT}:27017
     volumes:
+      - ./docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/:ro
       - mongodb_test_vol_db:/data/db
       - mongodb_test_vol_configdb:/data/configdb
-      - ./docker-entrypoint-initdb.d/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     networks:
       - flask-mongo-test-networks
 
   # Rabbitmq
   rabbitmq_test:
-    container_name: "rabbitmq"
+    container_name: "rabbitmq_test"
     image: rabbitmq:3.8-management-alpine
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}

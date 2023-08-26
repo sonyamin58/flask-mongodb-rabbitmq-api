@@ -1,15 +1,12 @@
 from flask import Flask
-import os
-from dotenv import load_dotenv
-
+from flask_cors import CORS
 from src.modules.routes import routes
 
 
 def build():
-    load_dotenv()
-
     app = Flask(__name__)
-    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
     app.register_blueprint(routes, url_prefix='/')
 
