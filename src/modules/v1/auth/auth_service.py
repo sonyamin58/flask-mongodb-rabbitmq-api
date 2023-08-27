@@ -66,6 +66,9 @@ class AuthService:
         self.now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         set["updated_at"] = self.now
 
+        if set["pin"] != None or set["pin"] != "":
+            set["pin"] = generate_password_hash(str(set["pin"]))
+
         update = self.users.update_one(
             where,
             {"$set": set}
