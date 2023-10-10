@@ -1,6 +1,42 @@
 version: '3'
 services:
 
+  # Rabbitmq
+  rabbitmq_test:
+    container_name: "rabbitmq_test"
+    image: rabbitmq:3.8-management-alpine
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
+    ports:
+      # AMQP protocol port
+      - ${RABBITMQ_PORT}:5672
+      # HTTP management UI
+      - ${RABBITMQ_PORT_MANAGEMENT}:15672
+    networks:
+      - flask-mongo-test-networks
+
+  # Mongodb
+  mongodb_test:
+    container_name: "mongodb_test"
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGODB_DATA_DIR: /data/db
+      MONDODB_LOG_DIR: /dev/null
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    ports:
+      - ${MONGO_INITDB_PORT}:27017
+    volumes:
+      - ./docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/:ro
+      - mongodb_test_vol_db:/data/db
+      - mongodb_test_vol_configdb:/data/configdb
+    networks:
+      - flask-mongo-test-networks
+
   # Python
   flask_test:
     container_name: flask_test
@@ -26,42 +62,6 @@ services:
     links:
       - mongodb_test
       - rabbitmq_test
-
-  # Mongodb
-  mongodb_test:
-    container_name: "mongodb_test"
-    image: mongo:latest
-    restart: always
-    environment:
-      MONGODB_DATA_DIR: /data/db
-      MONDODB_LOG_DIR: /dev/null
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_PASSWORD}
-      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
-    ports:
-      - ${MONGO_INITDB_PORT}:27017
-    volumes:
-      - ./docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/:ro
-      - mongodb_test_vol_db:/data/db
-      - mongodb_test_vol_configdb:/data/configdb
-    networks:
-      - flask-mongo-test-networks
-
-  # Rabbitmq
-  rabbitmq_test:
-    container_name: "rabbitmq_test"
-    image: rabbitmq:3.8-management-alpine
-    restart: always
-    environment:
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
-    ports:
-      # AMQP protocol port
-      - ${RABBITMQ_PORT}:5672
-      # HTTP management UI
-      - ${RABBITMQ_PORT_MANAGEMENT}:15672
-    networks:
-      - flask-mongo-test-networks
 
 #Docker Networks
 networks:

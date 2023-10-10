@@ -30,10 +30,17 @@ class SoalSatu:
         }
         for i, check in enumerate(list_kata_arr):
             for j, kata in enumerate(list_kata_arr):
-                if (i != j) and (check == kata) and (len(duplicate_kata["baris"]) == 0 or duplicate_kata["kata"] == check):
+                print(i+1, check, j+1, kata)
+                if (i != j) and (check == kata) and (len(duplicate_kata["baris"]) == 0 or duplicate_kata["kata"] == kata):
                     duplicate_kata["kata"] = check
+                    if (len(duplicate_kata["baris"]) == 0):
+                        duplicate_kata["baris"].append(j+1)
                     duplicate_kata["baris"].append(i+1)
                     break
+
+                if (j > 1):
+                    break
+
         return duplicate_kata
 
     def output(self, duplicate_kata):
